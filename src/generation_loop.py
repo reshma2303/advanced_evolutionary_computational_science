@@ -2,35 +2,11 @@ from initialization import *
 import math
 import numpy as np
 from numpy import linalg as LA
+from fitness_functions import *
 
 counteval = 0
 
-def strfitnessfct(input_array):
-    """
-        Ref: https://www.mathworks.com/matlabcentral/fileexchange/37057-fast-adaptive-coordinate-descent-for-non-linear-optimization
-            function f=felli(x)
-        %  f = rand();
-        %  return;
-          N = size(x,1); if N < 2 error('dimension must be greater one'); end
-          f=1e6.^((0:N-1)/(N-1)) * x.^2;
-        end
 
-
-        function f=felli(x)
-        111 N = size(x,1); if N < 2 error(’dimension must be greater one’); end
-        112 f=1e6.ˆ((0:N-1)/(N-1)) * x.ˆ2; % condition number 1e6
-    :param input_array:
-    :return:
-    """
-    input_len = input_array.shape[0] # Size of the x-dimension
-    if input_len < 2:
-        raise Exception('dimension must be greater one')
-    x_square = input_array * input_array
-    n_1 = input_len - 1
-    n_1_array = [i*1.0/(n_1) for i in range(input_len)]
-    n_1_array_1e6 = np.array([math.pow(1e6, each)for each in n_1_array])
-    fitness_value = np.matmul(n_1_array_1e6 , x_square) 
-    return fitness_value[0]
 
 
 iteration_i = 1
@@ -40,7 +16,7 @@ while counteval <= eigenval:
         51 for k=1:lambda,
         52 arz(:,k) = randn(N,1); % standard normally distributed vector
         53 arx(:,k) = xmean + sigma * (B*D * arz(:,k)); % add mutation % Eq. 40
-        54 arfitness(k) = feval(strfitnessfct, arx(:,k)); % objective function call
+        54 arfitness(k) = feval(quadratic_fitness_function, arx(:,k)); % objective function call
         55 counteval = counteval+1;
         56 end
         
@@ -57,7 +33,7 @@ while counteval <= eigenval:
         BD_arz_mathmul = np.matmul(BD_matmul, arz)
         arx = xmean + sigma * BD_arz_mathmul
         arx_list.append(arx)
-        current_fitness = strfitnessfct(arx)
+        current_fitness = quadratic_fitness_function(arx)
         arfitness.append(current_fitness)
         counteval += 1
     print(f"All Fitnesses for iteration {iteration_i}")
