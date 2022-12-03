@@ -45,13 +45,17 @@ while counteval <= eigenval:
         
 
     """
+    arz_list = []
+    arx_list = []
     arfitness = []
     for k in range(1, int(lambda_val)):
         # converted to -1,1 shape for vertical representation
         arz = np.random.normal(size=N).reshape(-1,1) # check if we have to change mean
+        arz_list.append(arz)
         BD_matmul = np.matmul(B, D)
         BD_arz_mathmul = np.matmul(BD_matmul, arz)
         arx = xmean + sigma * BD_arz_mathmul
+        arx_list.append(arx)
         current_fitness = strfitnessfct(arx)
         arfitness.append(current_fitness)
         counteval += 1
@@ -67,7 +71,25 @@ while counteval <= eigenval:
     60 xmean = arx(:,arindex(1:mu))*weights; % recombination % Eq. 42
     61 zmean = arz(:,arindex(1:mu))*weights; % == Dˆ-1*B’*(xmean-xold)/sigma
     """
+    sorted_arfitness = np.sort(arfitness)
+    sorted_arfitness_indexes = np.argsort(arfitness)
+    top_mu_indexes = sorted_arfitness_indexes[:mu]
+    arx_list_subset = []
+    arz_list_subset = []
+    for ix in top_mu_indexes:
+        arx_list_subset.append(arx_list[ix])
+        arz_list_subset.append(arz_list[ix])
 
+    arx_list_subset_reshaped = np.array(arx_list_subset).reshape(5,10,-1).reshape(5,10).transpose(1,0)
+    xmean = np.matmul(arx_list_subset_reshaped,weights)
+
+    arz_list_subset_reshaped = np.array(arz_list_subset).reshape(5,10,-1).reshape(5,10).transpose(1,0)
+    zmean = np.matmul(arx_list_subset_reshaped,weights)
+    print(zmean)
+    
+
+
+    
 
     """
     % Cumulation: Update evolution paths

@@ -29,6 +29,7 @@ weights = np_matrix.T # % muXone recombination weights 1D array transpose no eff
 #print(np.transpose(weights))
 #print(weights)
 weights = [exp1-each for each in weights]
+weights = np.array(weights).reshape(-1,1)
 #print(weights)
 
 mu = math.floor(mu) # number of parents/points for recombination
