@@ -85,7 +85,7 @@ while counteval <= eigenval:
     xmean = np.matmul(arx_list_subset_reshaped,weights)
 
     arz_list_subset_reshaped = np.array(arz_list_subset).reshape(5,10,-1).reshape(5,10).transpose(1,0)
-    zmean = np.matmul(arx_list_subset_reshaped,weights)
+    zmean = np.matmul(arz_list_subset_reshaped,weights)
     
 
 
@@ -110,7 +110,6 @@ while counteval <= eigenval:
         hsig = 1
     else:
         hsig = 0
-    print(math.sqrt(cc * (2-cc) * mueff))
     pc = (1 - cc) * pc + hsig * math.sqrt(cc * (2-cc) * mueff) * np.matmul(np.matmul(B, D),zmean)
 
     """
@@ -121,8 +120,16 @@ while counteval <= eigenval:
         72 + cmu ... % plus rank mu update
         73 * (B*D*arz(:,arindex(1:mu))) ...
         74 * diag(weights) * (B*D*arz(:,arindex(1:mu)))’;
-    """
 
+        cmu * artmp * diag(weights) * artmp'
+    """
+    term1 = (1-c1-cmu) * C 
+    term2 = c1 * (np.matmul(pc, np.transpose(pc)) + (1-hsig) * cc * (2-cc) * C)
+    term3_1 = np.matmul(np.matmul(np.matmul(B, D), arz_list_subset_reshaped),np.diagflat(weights))
+    term3_2 = np.transpose(np.matmul(np.matmul(B, D), arz_list_subset_reshaped))
+    term3 = np.matmul(term3_1, term3_2)
+
+    C = term1 + term2 + term3
 
 
     """

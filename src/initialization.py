@@ -79,7 +79,7 @@ ps = np.zeros(N).reshape(-1,1)
 B = np.eye(N)
 D = np.eye(N)
 BD_T = np.array(B * D).T
-C = B * D * BD_T # TODO: Check if transpose works
+C = np.matmul(np.matmul(B , D) , BD_T) # TODO: Check if transpose works
 
 eigenval = 0
 
