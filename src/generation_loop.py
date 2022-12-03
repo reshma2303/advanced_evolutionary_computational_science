@@ -144,7 +144,9 @@ while counteval <= eigenval:
         84 D = diag(sqrt(diag(D))); % D contains standard deviations now
         85 end
     """
-
+    print(cs)
+    print(damps)
+    #sigma = sigma * *(LA.norm(ps)/(chiN-1))
 
 
     """
