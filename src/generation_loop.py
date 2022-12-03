@@ -144,9 +144,7 @@ while counteval <= eigenval:
         84 D = diag(sqrt(diag(D))); % D contains standard deviations now
         85 end
     """
-    print(cs)
-    print(damps)
-    #sigma = sigma * *(LA.norm(ps)/(chiN-1))
+    sigma = sigma * math.exp(cs/damps) *(LA.norm(ps)/(chiN-1))
 
 
     """
@@ -155,6 +153,8 @@ while counteval <= eigenval:
         89 break;
         90 end
     """
+    if sorted_arfitness[0] <= stopfitness:
+        break
 
 
     """
@@ -166,6 +166,10 @@ while counteval <= eigenval:
         97
         98 disp([num2str(counteval) ’: ’ num2str(arfitness(1))]);
     """
+    if sorted_arfitness[0] <= sorted_arfitness(math.ceil(0.7*lambda_val)):
+        sigma = sigma * math.exp((0.2 + (cs/damps)))
+        print("Warning: Flat fitness, consider reformulating the objective")
+    print(f"Best fitness value for the epoch {counteval} is: {sorted_arfitness[0]}")
     # end while loop
 
 # -------------------- Final Message ---------------------------------
@@ -177,5 +181,6 @@ disp([num2str(counteval) ’: ’ num2str(arfitness(1))]);
 106 % Notice that xmean is expected to be even
 107 % better.
 """
-
+print(f"Best fitness value for the epoch {counteval} is: {sorted_arfitness[0]}")
+xmin = arx_list_subset_reshaped[0]
 
