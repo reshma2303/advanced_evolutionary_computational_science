@@ -1,6 +1,7 @@
 from initialization import *
 import math
 import numpy as np
+from numpy import linalg as LA
 
 counteval = 0
 
@@ -85,7 +86,6 @@ while counteval <= eigenval:
 
     arz_list_subset_reshaped = np.array(arz_list_subset).reshape(5,10,-1).reshape(5,10).transpose(1,0)
     zmean = np.matmul(arx_list_subset_reshaped,weights)
-    print(zmean)
     
 
 
@@ -97,8 +97,21 @@ while counteval <= eigenval:
     65 hsig = norm(ps)/sqrt(1-(1-cs)ˆ(2*counteval/lambda))/chiN < 1.4+2/(N+1);
     66 pc = (1-cc)*pc + hsig * sqrt(cc*(2-cc)*mueff) * (B*D*zmean); % Eq. 45
     """
-
-
+    B_zmean = np.matmul(B, zmean)
+    value_in_sqrt = cs * (2-cs) * mueff
+    ps = (1 - cs) * ps + math.sqrt(value_in_sqrt) * B_zmean
+    #print(LA.norm(ps))
+    #hsig =    1 - (1-cs)
+    value_inside_sqrt = 1 - math.pow(1 - cs, (2 * counteval)/lambda_val)
+    numerator_1 = LA.norm(ps)/value_inside_sqrt
+    lhs = numerator_1/chiN
+    rhs = 1.4 + 2/(N+1)
+    if lhs < rhs:
+        hsig = 1
+    else:
+        hsig = 0
+    print(math.sqrt(cc * (2-cc) * mueff))
+    pc = (1 - cc) * pc + hsig * math.sqrt(cc * (2-cc) * mueff) * np.matmul(np.matmul(B, D),zmean)
 
     """
         Adapt covariance matrix C

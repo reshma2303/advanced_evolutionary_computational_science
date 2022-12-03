@@ -17,27 +17,34 @@ stopeval = 1e3*(N ^ 2) #stop after stopeval number of function evaluations
 
 
 """
-Strategy parameter setting: Selection
+% Strategy parameter setting: Selection
+21 lambda = 4+floor(3*log(N)); % population size, offspring number
+22 mu = lambda/2; % lambda=12; mu=3; weights = ones(mu,1); would be (3_I,12)-ES
+23 weights = log(mu+1/2)-log(1:mu)’; % muXone recombination weights
+24 mu = floor(mu); % number of parents/points for recombination
+25 weights = weights/sum(weights); % normalize recombination weights array
+26 mueff=sum(weights)ˆ2/sum(weights.ˆ2); % variance-effective size of mu
 """
 lambda_val = 4+math.floor(3*math.log(N)) # population size, offspring number
 mu = lambda_val/2 # lambda=12; mu=3; weights = ones(mu,1); would be (3_I,12)-ES
 
 exp1 = math.log(mu+1.0/2)
-matrix = [math.log(each) for each in range(1,6)]
+matrix = [math.log(each) for each in range(1,int(mu + 1))]
 np_matrix = np.array(matrix)
 weights = np_matrix.T # % muXone recombination weights 1D array transpose no effect in python unlike matlab
 #print(np.transpose(weights))
 #print(weights)
 weights = [exp1-each for each in weights]
+
 weights = np.array(weights).reshape(-1,1)
-#print(weights)
 
 mu = math.floor(mu) # number of parents/points for recombination
-#print("floor mu: ", mu)
 weights = weights/sum(weights)  #normalize recombination weights array
 weights_squares = [each * each for each in weights]
 numerator = math.pow(sum(weights), 2)
 mueff=numerator/sum(weights_squares)  #variance-effective size of mu
+mueff = mueff[0]
+
 
 """
 % Strategy parameter setting: Adaptation
@@ -55,6 +62,7 @@ cmu = 2 * (mueff - 2 + 1 /mueff)
 damps = 1 + 2 * max(0, math.sqrt ((mueff - 1)/ (N + 1)) - 1) + cs
 
 
+
 """
 % Initialize dynamic (internal) strategy parameters and constants
 37 pc = zeros(N,1); ps = zeros(N,1); % evolution paths for C and sigma
@@ -66,7 +74,8 @@ damps = 1 + 2 * max(0, math.sqrt ((mueff - 1)/ (N + 1)) - 1) + cs
 43 % ||N(0,I)|| == norm(randn(N,1))
 """
 
-pc = np.zeros(N)
+pc = np.zeros(N).reshape(-1,1)
+ps = np.zeros(N).reshape(-1,1)
 B = np.eye(N)
 D = np.eye(N)
 BD_T = np.array(B * D).T
