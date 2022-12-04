@@ -2,7 +2,7 @@
 
 import numpy as np
 import math
-
+from pemfc_helper_functions import *
 
 def felli_fitness_function(input_array):
     """
@@ -31,5 +31,18 @@ def felli_fitness_function(input_array):
     fitness_value = np.matmul(n_1_array_1e6 , x_square) 
     return fitness_value[0]
 
+v_actual = compute_end_to_end_Vstack(ip_x1=-0.944957, ip_x2=0.00301801, ip_x3=7.401*math.pow(10,5), 
+	ip_x4=-1.88 * math.pow(10,-4), ip_lambda=23, ip_Rc=0.0001, ip_B=0.02914489)
+
+
 def pemfc_fitness_function(input_parameters_array):
- 	pass
+ 	
+
+ 	Vstack_model = compute_end_to_end_Vstack(input_parameters_array[0],
+ 		input_parameters_array[1], input_parameters_array[2], input_parameters_array[3],
+ 		input_parameters_array[4], input_parameters_array[5], input_parameters_array[6],
+ 		input_parameters_array[7])
+
+ 	diff = Vstack_model - v_actual
+ 	diff_square = diff * diff
+ 	return diff_square

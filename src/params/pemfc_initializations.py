@@ -9,6 +9,27 @@ User defined input parameters (need to be edited)
 """
 strfitnessfct = "felli" # name of objective/fitness function
 N = 10 # number of objective variables/problem dimension
+Ns = 24 # number of cells in the stack
+T = 1273 # stack temperature, K
+RHa = 1 # relative humidity of vapor in anode
+RHc = 1 # relative humidity of vapor in cathode
+pa_value = 3
+pc_value = 5
+i_value = 0.453
+A_value  = 27
+Rm =  1 # equivalent resistance of membrane, U
+Rc =  1 # resistance, U
+B = 10 # concentration loss constant, V
+"""
+iden current density, A/cm2
+ilimit,den limiting current density, A
+"""
+iden = 0.934
+ilimit =  0.832
+
+
+
+
 #xmean = rand(N,1) # objective variables initial point
 xmean = np.random.uniform(size=N).reshape(-1,1) # reshaping to make it vertical
 sigma = 0.5 # coordinate wise standard deviation (step-size)
