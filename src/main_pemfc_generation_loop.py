@@ -15,7 +15,7 @@ if __name__=="__main__":
     counteval = 0
 
     iteration_i = 1
-    while counteval <= eigenval:
+    while counteval <= stopeval:
         """
             % Generate and evaluate lambda offspring
             51 for k=1:lambda,
@@ -35,7 +35,7 @@ if __name__=="__main__":
             BD_arz_mathmul = np.matmul(BD_matmul, arz)
             arx = xmean + sigma * BD_arz_mathmul
             arx_list.append(arx)
-            current_fitness = felli_fitness_function(arx)
+            current_fitness = pemfc_fitness_function(arx)
             arfitness.append(current_fitness)
             counteval += 1
         iteration_i += 1
@@ -48,6 +48,7 @@ if __name__=="__main__":
         """
         sorted_arfitness, sorted_arfitness_indexes, arx_list_subset_reshaped,arz_list_subset_reshaped, xmean, zmean = sort_fitness_and_get_xmean_zmean(
             arfitness, mu, arx_list, arz_list, weights)
+        print(sorted_arfitness)
 
         """
         % Cumulation: Update evolution paths
@@ -89,6 +90,7 @@ if __name__=="__main__":
                     break;
         """
         if sorted_arfitness[0] <= stopfitness:
+            print("sorted_arfitness[0] is less than stopfitness")
             break
         """
         % Escape flat fitness, or better terminate?
@@ -99,7 +101,7 @@ if __name__=="__main__":
             97
             98 disp([num2str(counteval) ’: ’ num2str(arfitness(1))]);
         """
-        if sorted_arfitness[0] <= sorted_arfitness(math.ceil(0.7*lambda_val)):
+        if sorted_arfitness[0] <= sorted_arfitness[math.ceil(0.7*lambda_val)]:
             sigma = sigma * math.exp((0.2 + (cs/damps)))
             print("Warning: Flat fitness, consider reformulating the objective")
         print(f"Best fitness value for the epoch {counteval} is: {sorted_arfitness[0]}")

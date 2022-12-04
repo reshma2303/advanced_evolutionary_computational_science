@@ -15,7 +15,7 @@ if __name__=="__main__":
     counteval = 0
 
     iteration_i = 1
-    while counteval <= eigenval:
+    while counteval <= stopeval:
         """
             % Generate and evaluate lambda offspring
             51 for k=1:lambda,

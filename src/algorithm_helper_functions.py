@@ -13,10 +13,10 @@ def sort_fitness_and_get_xmean_zmean(input_fitness,input_mu, input_arx_list, inp
 	for ix in top_mu_indexes:
 		arx_list_subset.append(input_arx_list[ix])
 		arz_list_subset.append(input_arz_list[ix])
-	arx_list_subset_reshaped = np.array(arx_list_subset).reshape(5,10,-1).reshape(5,10).transpose(1,0)
+	arx_list_subset_reshaped = np.array(arx_list_subset).reshape(input_mu,7,-1).reshape(input_mu,7).transpose(1,0)
 	xmean = np.matmul(arx_list_subset_reshaped,input_weights)
 
-	arz_list_subset_reshaped = np.array(arz_list_subset).reshape(5,10,-1).reshape(5,10).transpose(1,0)
+	arz_list_subset_reshaped = np.array(arz_list_subset).reshape(input_mu,7,-1).reshape(input_mu,7).transpose(1,0)
 	zmean = np.matmul(arz_list_subset_reshaped,input_weights)
 	return sorted_arfitness, sorted_arfitness_indexes, arx_list_subset_reshaped,arz_list_subset_reshaped, xmean, zmean
 
