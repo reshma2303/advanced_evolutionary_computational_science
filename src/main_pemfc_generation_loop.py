@@ -41,7 +41,7 @@ if __name__=="__main__":
             current_fitness = pemfc_fitness_function(arx)
             arfitness.append(current_fitness)
             counteval += 1
-        iteration_i += 1
+        
         
         """
         % Sort by fitness and compute weighted mean into xmean
@@ -107,7 +107,9 @@ if __name__=="__main__":
         if sorted_arfitness[0] <= sorted_arfitness[math.ceil(0.7*lambda_val)]:
             sigma = sigma * math.exp((0.2 + (cs/damps)))
             #print("Warning: Flat fitness, consider reformulating the objective")
-        #print(f"Best fitness value for the epoch {counteval} is: {sorted_arfitness[0]}")
+        print(f"Best fitness value for the epoch {iteration_i} is: {sorted_arfitness[0]}")
+        print("-------------------------------------------------")
+        iteration_i += 1
         # end while loop
     # -------------------- Final Message ---------------------------------
     """
