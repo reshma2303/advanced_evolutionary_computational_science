@@ -1,13 +1,16 @@
+"""
+% CMA-ES: Evolution Strategy with Covariance Matrix Adaptation for
+3 % nonlinear function minimization.
+"""
+
 from initialization import *
 import math
 import numpy as np
 from numpy import linalg as LA
 from fitness_functions import *
+from helper_functions import *
 
 counteval = 0
-
-
-
 
 iteration_i = 1
 while counteval <= eigenval:
@@ -18,9 +21,6 @@ while counteval <= eigenval:
         53 arx(:,k) = xmean + sigma * (B*D * arz(:,k)); % add mutation % Eq. 40
         54 arfitness(k) = feval(quadratic_fitness_function, arx(:,k)); % objective function call
         55 counteval = counteval+1;
-        56 end
-        
-
     """
     arz_list = []
     arx_list = []
@@ -36,36 +36,16 @@ while counteval <= eigenval:
         current_fitness = quadratic_fitness_function(arx)
         arfitness.append(current_fitness)
         counteval += 1
-    print(f"All Fitnesses for iteration {iteration_i}")
     iteration_i += 1
-    print(arfitness)
     
-
-
     """
     % Sort by fitness and compute weighted mean into xmean
     59 [arfitness, arindex] = sort(arfitness); % minimization
     60 xmean = arx(:,arindex(1:mu))*weights; % recombination % Eq. 42
     61 zmean = arz(:,arindex(1:mu))*weights; % == Dˆ-1*B’*(xmean-xold)/sigma
     """
-    sorted_arfitness = np.sort(arfitness)
-    sorted_arfitness_indexes = np.argsort(arfitness)
-    top_mu_indexes = sorted_arfitness_indexes[:mu]
-    arx_list_subset = []
-    arz_list_subset = []
-    for ix in top_mu_indexes:
-        arx_list_subset.append(arx_list[ix])
-        arz_list_subset.append(arz_list[ix])
-
-    arx_list_subset_reshaped = np.array(arx_list_subset).reshape(5,10,-1).reshape(5,10).transpose(1,0)
-    xmean = np.matmul(arx_list_subset_reshaped,weights)
-
-    arz_list_subset_reshaped = np.array(arz_list_subset).reshape(5,10,-1).reshape(5,10).transpose(1,0)
-    zmean = np.matmul(arz_list_subset_reshaped,weights)
-    
-
-
-    
+    sorted_arfitness, sorted_arfitness_indexes, arx_list_subset_reshaped,arz_list_subset_reshaped, xmean, zmean = sort_fitness_and_get_xmean_zmean(
+        arfitness, mu, arx_list, arz_list, weights)
 
     """
     % Cumulation: Update evolution paths
@@ -76,18 +56,8 @@ while counteval <= eigenval:
     B_zmean = np.matmul(B, zmean)
     value_in_sqrt = cs * (2-cs) * mueff
     ps = (1 - cs) * ps + math.sqrt(value_in_sqrt) * B_zmean
-    #print(LA.norm(ps))
-    #hsig =    1 - (1-cs)
-    value_inside_sqrt = 1 - math.pow(1 - cs, (2 * counteval)/lambda_val)
-    numerator_1 = LA.norm(ps)/value_inside_sqrt
-    lhs = numerator_1/chiN
-    rhs = 1.4 + 2/(N+1)
-    if lhs < rhs:
-        hsig = 1
-    else:
-        hsig = 0
+    hsig = compute_hsig(cs, counteval, lambda_val, ps, chiN, N)
     pc = (1 - cc) * pc + hsig * math.sqrt(cc * (2-cc) * mueff) * np.matmul(np.matmul(B, D),zmean)
-
     """
         Adapt covariance matrix C
         69 C = (1-c1-cmu) * C ... % regard old matrix % Eq. 47
@@ -96,18 +66,9 @@ while counteval <= eigenval:
         72 + cmu ... % plus rank mu update
         73 * (B*D*arz(:,arindex(1:mu))) ...
         74 * diag(weights) * (B*D*arz(:,arindex(1:mu)))’;
-
-        cmu * artmp * diag(weights) * artmp'
     """
-    term1 = (1-c1-cmu) * C 
-    term2 = c1 * (np.matmul(pc, np.transpose(pc)) + (1-hsig) * cc * (2-cc) * C)
-    term3_1 = np.matmul(np.matmul(np.matmul(B, D), arz_list_subset_reshaped),np.diagflat(weights))
-    term3_2 = np.transpose(np.matmul(np.matmul(B, D), arz_list_subset_reshaped))
-    term3 = np.matmul(term3_1, term3_2)
-
-    C = term1 + term2 + term3
-
-
+    C = adapt_covariance_matrix(c1, cmu, pc, hsig, cc, weights, arz_list_subset_reshaped, C,
+                                B, D)
     """
         % Adapt step-size sigma
         77 sigma = sigma * exp((cs/damps)*(norm(ps)/chiN - 1)); % Eq. 44
@@ -118,21 +79,15 @@ while counteval <= eigenval:
         82 C=triu(C)+triu(C,1)’; % enforce symmetry
         83 [B,D] = eig(C); % eigen decomposition, B==normalized eigenvectors
         84 D = diag(sqrt(diag(D))); % D contains standard deviations now
-        85 end
     """
     sigma = sigma * math.exp(cs/damps) *(LA.norm(ps)/(chiN-1))
-
-
     """
         % Break, if fitness is good enough
         88 if arfitness(1) <= stopfitness
-        89 break;
-        90 end
+                break;
     """
     if sorted_arfitness[0] <= stopfitness:
         break
-
-
     """
     % Escape flat fitness, or better terminate?
         93 if arfitness(1) == arfitness(ceil(0.7*lambda))
