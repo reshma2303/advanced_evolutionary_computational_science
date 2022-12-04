@@ -4,7 +4,7 @@ import numpy as np
 import math
 
 
-def quadratic_fitness_function(input_array):
+def felli_fitness_function(input_array):
     """
         Ref: https://www.mathworks.com/matlabcentral/fileexchange/37057-fast-adaptive-coordinate-descent-for-non-linear-optimization
             function f=felli(x)
@@ -30,3 +30,6 @@ def quadratic_fitness_function(input_array):
     n_1_array_1e6 = np.array([math.pow(1e6, each)for each in n_1_array])
     fitness_value = np.matmul(n_1_array_1e6 , x_square) 
     return fitness_value[0]
+
+def pemfc_fitness_function(input_parameters_array):
+ 	pass

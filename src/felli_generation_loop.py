@@ -3,12 +3,12 @@
 3 % nonlinear function minimization.
 """
 
-from initialization import *
+from params.felli_initializations import *
 import math
 import numpy as np
 from numpy import linalg as LA
 from fitness_functions import *
-from helper_functions import *
+from algorithm_helper_functions import *
 
 if __name__=="__main__":
 
@@ -35,7 +35,7 @@ if __name__=="__main__":
             BD_arz_mathmul = np.matmul(BD_matmul, arz)
             arx = xmean + sigma * BD_arz_mathmul
             arx_list.append(arx)
-            current_fitness = quadratic_fitness_function(arx)
+            current_fitness = felli_fitness_function(arx)
             arfitness.append(current_fitness)
             counteval += 1
         iteration_i += 1
