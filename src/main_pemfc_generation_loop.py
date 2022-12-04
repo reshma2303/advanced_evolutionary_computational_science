@@ -10,6 +10,9 @@ from numpy import linalg as LA
 from fitness_functions import *
 from algorithm_helper_functions import *
 
+import warnings
+warnings.filterwarnings('ignore')
+
 if __name__=="__main__":
 
     counteval = 0
@@ -48,7 +51,6 @@ if __name__=="__main__":
         """
         sorted_arfitness, sorted_arfitness_indexes, arx_list_subset_reshaped,arz_list_subset_reshaped, xmean, zmean = sort_fitness_and_get_xmean_zmean(
             arfitness, mu, arx_list, arz_list, weights)
-        print(sorted_arfitness)
 
         """
         % Cumulation: Update evolution paths
@@ -92,6 +94,7 @@ if __name__=="__main__":
         if sorted_arfitness[0] <= stopfitness:
             print("sorted_arfitness[0] is less than stopfitness")
             break
+
         """
         % Escape flat fitness, or better terminate?
             93 if arfitness(1) == arfitness(ceil(0.7*lambda))
@@ -103,8 +106,8 @@ if __name__=="__main__":
         """
         if sorted_arfitness[0] <= sorted_arfitness[math.ceil(0.7*lambda_val)]:
             sigma = sigma * math.exp((0.2 + (cs/damps)))
-            print("Warning: Flat fitness, consider reformulating the objective")
-        print(f"Best fitness value for the epoch {counteval} is: {sorted_arfitness[0]}")
+            #print("Warning: Flat fitness, consider reformulating the objective")
+        #print(f"Best fitness value for the epoch {counteval} is: {sorted_arfitness[0]}")
         # end while loop
     # -------------------- Final Message ---------------------------------
     """
@@ -113,6 +116,6 @@ if __name__=="__main__":
     106 % Notice that xmean is expected to be even
     107 % better.
     """
-    print(f"Best fitness value for the epoch {counteval} is: {sorted_arfitness[0]}")
+    #print(f"Best fitness value for the epoch {counteval} is: {sorted_arfitness[0]}")
     xmin = arx_list_subset_reshaped[0]
 
